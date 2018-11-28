@@ -14,7 +14,7 @@ import (
 func doGetReq(uri string) *http.Response {
 	response, err := http.Get(uri)
 	if err != nil {
-		log.Fatalf("Request to URI [%v] failed: %v\n", uri, err)
+		log.Fatalf("Request to URI [%v] failed:\n[Reason]-> %v\n", uri, err)
 	}
 	return response
 }
@@ -22,7 +22,7 @@ func doGetReq(uri string) *http.Response {
 func uriToOBJ(uri string, obj interface{}) {
 	bytes, err := ioutil.ReadAll(doGetReq(uri).Body)
 	if err != nil {
-		log.Fatalf("Fail reading response of URI [%v] %v\n", uri, err)
+		log.Fatalf("Fail reading URI response [%v]\n[Reason]->%v\n", uri, err)
 	}
 	err = json.Unmarshal(bytes, &obj)
 	if err != nil {
