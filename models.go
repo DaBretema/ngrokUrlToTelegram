@@ -34,7 +34,7 @@ func uriToOBJ(uri string, obj interface{}) {
 
 // Reply of --> "https://api.telegram.org/bot<TOKEN>/getUpdates"
 
-type tgGetUpdatesReply struct {
+type tgUpdatesReply struct {
 	Ok     bool `json:"ok"`
 	Result []struct {
 		UpdateID int `json:"update_id"`
@@ -65,7 +65,7 @@ type tgGetUpdatesReply struct {
 	} `json:"result"`
 }
 
-func (o *tgGetUpdatesReply) FillFromURI(uri string) {
+func (o *tgUpdatesReply) FillFromURI(uri string) {
 	uriToOBJ(uri, o)
 	if !o.Ok {
 		log.Fatalf("Telegram request error. Maybe BAD token?")

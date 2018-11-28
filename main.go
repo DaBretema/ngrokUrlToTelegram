@@ -11,7 +11,7 @@ var _uri = map[string]string{
 	"tgMsg":    "https://api.telegram.org/bot%v/sendMessage?chat_id=%v&text=%v",
 }
 
-const token = "<YOUR_TOKEN>"
+const token = "<BOT_TOKEN>"
 
 func main() {
 	tgSend(ngrokURL())
@@ -27,10 +27,10 @@ func ngrokURL() string {
 
 func tgSend(msg string) {
 	if r := recover(); r != nil {
-		log.Printf("Please \"/start\" the bot if you haven't:\n%v\n", r)
+		log.Printf("Please \"/start\" the bot if you haven't: %v\n", r)
 	}
 	// Get reply of telegram api by token
-	var tgr tgGetUpdatesReply
+	var tgr tgUpdatesReply
 	tgr.FillFromURI(fmt.Sprintf(_uri["tgChatID"], token))
 	// Capture chat id
 	chatID := tgr.Result[0].Message.Chat.ID
