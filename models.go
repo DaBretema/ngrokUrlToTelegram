@@ -11,7 +11,7 @@ import (
 // Helpers
 //
 
-func doGetReq(uri string) *http.Response {
+func hGet(uri string) *http.Response {
 	response, err := http.Get(uri)
 	if err != nil {
 		log.Fatalf("FAIL GETing @ URI: %v\n", uri)
@@ -20,7 +20,7 @@ func doGetReq(uri string) *http.Response {
 }
 
 func uriToOBJ(uri string, obj interface{}) {
-	if bytes, err := ioutil.ReadAll(doGetReq(uri).Body); err != nil {
+	if bytes, err := ioutil.ReadAll(hGet(uri).Body); err != nil {
 		log.Fatalf("FAIL READing @ URI: %v\n", uri)
 	} else if err = json.Unmarshal(bytes, &obj); err != nil {
 		log.Fatalf("FAIL UNMARSHALing @ URI: %v\n", uri)

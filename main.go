@@ -30,5 +30,5 @@ func main() {
 	chatID := tgr.Result[0].Message.Chat.ID
 
 	// 4.- Send ngrok url to telegram bot
-	doGetReq(fmt.Sprintf(tgSend, token, chatID, ngrokURL))
+	hGet(fmt.Sprintf(tgSend, token, chatID, ngrokURL))
 }
