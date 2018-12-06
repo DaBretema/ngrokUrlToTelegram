@@ -3,37 +3,32 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 )
 
-var _URI = map[string]string{
-	"ngrok":    "http://127.0.0.1:4040/api/tunnels/",
-	"tgChatID": "https://api.telegram.org/bot%v/getUpdates",
-	"tgMsg":    "https://api.telegram.org/bot%v/sendMessage?chat_id=%v&text=%v",
-}
-
-const token = "<BOT_TOKEN>"
+const ngTunnels = "http://127.0.0.1:4040/api/tunnels/"
+const tgGetID = "https://api.telegram.org/bot%v/getUpdates"
+const tgSend = "https://api.telegram.org/bot%v/sendMessage?chat_id=%v&text=%v"
 
 func main() {
-	tgSend(ngrokURL())
-}
+	defer recov(_TgSleep)
 
-func ngrokURL() string {
-	// Get reply of ngrok api
-	var ngr ngrokReply
-	ngr.FillFromURI(_URI["ngrok"])
-	// Caputre public url of ngrok tunnel
-	return ngr.Tunnels[0].PublicURL
-}
+	// 1.- Get ngrok url
+	var ng ngModel
+	ng.FillFromURI(ngTunnels)
+	ngrokURL := ng.Tunnels[0].PublicURL
 
-func tgSend(msg string) {
-	if r := recover(); r != nil {
-		log.Printf("[Please \"/start\" the bot if you haven't]\n%v\n", r)
+	// 2.- Get token from os env
+	token := os.Getenv("ngrokUrlBot")
+	if token == "" {
+		log.Fatalln(_NoToken)
 	}
-	// Get reply of telegram api by token
-	var tgr tgUpdatesReply
-	tgr.FillFromURI(fmt.Sprintf(_URI["tgChatID"], token))
-	// Capture chat id
+
+	// 3.- Get chat id from telegram api
+	var tgr tgModel
+	tgr.FillFromURI(fmt.Sprintf(tgGetID, token))
 	chatID := tgr.Result[0].Message.Chat.ID
-	// Send messagge
-	doGetReq(fmt.Sprintf(_URI["tgMsg"], token, chatID, msg))
+
+	// 4.- Send ngrok url to telegram bot
+	doGetReq(fmt.Sprintf(tgSend, token, chatID, ngrokURL))
 }

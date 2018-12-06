@@ -14,19 +14,16 @@ import (
 func doGetReq(uri string) *http.Response {
 	response, err := http.Get(uri)
 	if err != nil {
-		log.Fatalf("Request to URI [%v] failed:\n[Reason]-> %v\n", uri, err)
+		log.Fatalf("FAIL GETing @ URI: %v\n", uri)
 	}
 	return response
 }
 
 func uriToOBJ(uri string, obj interface{}) {
-	bytes, err := ioutil.ReadAll(doGetReq(uri).Body)
-	if err != nil {
-		log.Fatalf("Fail reading URI response [%v]\n[Reason]->%v\n", uri, err)
-	}
-	err = json.Unmarshal(bytes, &obj)
-	if err != nil {
-		log.Fatalf("Err unmarshaling JSON: %v\n", err)
+	if bytes, err := ioutil.ReadAll(doGetReq(uri).Body); err != nil {
+		log.Fatalf("FAIL READing @ URI: %v\n", uri)
+	} else if err = json.Unmarshal(bytes, &obj); err != nil {
+		log.Fatalf("FAIL UNMARSHALing @ URI: %v\n", uri)
 	}
 }
 
@@ -34,7 +31,7 @@ func uriToOBJ(uri string, obj interface{}) {
 
 // Reply of --> "https://api.telegram.org/bot<TOKEN>/getUpdates"
 
-type tgUpdatesReply struct {
+type tgModel struct {
 	Ok     bool `json:"ok"`
 	Result []struct {
 		UpdateID int `json:"update_id"`
@@ -65,7 +62,7 @@ type tgUpdatesReply struct {
 	} `json:"result"`
 }
 
-func (o *tgUpdatesReply) FillFromURI(uri string) {
+func (o *tgModel) FillFromURI(uri string) {
 	uriToOBJ(uri, o)
 	if !o.Ok {
 		log.Fatalf("Telegram request error. Maybe BAD token?")
@@ -76,7 +73,7 @@ func (o *tgUpdatesReply) FillFromURI(uri string) {
 
 // Reply of --> "http://127.0.0.1:4040/api/tunnels"
 
-type ngrokReply struct {
+type ngModel struct {
 	Tunnels []struct {
 		Name      string `json:"name"`
 		URI       string `json:"uri"`
@@ -113,7 +110,8 @@ type ngrokReply struct {
 	URI string `json:"uri"`
 }
 
-func (o *ngrokReply) FillFromURI(uri string) {
+func (o *ngModel) FillFromURI(uri string) {
+	defer recov(_NgrokDown)
 	uriToOBJ(uri, o)
 }
 
