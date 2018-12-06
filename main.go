@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 )
 
@@ -21,7 +20,7 @@ func main() {
 	// 2.- Get token from os env
 	token := os.Getenv("ngrokUrlBot")
 	if token == "" {
-		log.Fatalln(_NoToken)
+		errxit(_TgNoToken)
 	}
 
 	// 3.- Get chat id from telegram api

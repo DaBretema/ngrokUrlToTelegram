@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -14,16 +13,16 @@ import (
 func hGet(uri string) *http.Response {
 	response, err := http.Get(uri)
 	if err != nil {
-		log.Fatalf("FAIL GETing @ URI: %v\n", uri)
+		errxit("FAIL GETing @ URI: " + uri)
 	}
 	return response
 }
 
 func uriToOBJ(uri string, obj interface{}) {
 	if bytes, err := ioutil.ReadAll(hGet(uri).Body); err != nil {
-		log.Fatalf("FAIL READing @ URI: %v\n", uri)
+		errxit("FAIL READing @ URI: " + uri)
 	} else if err = json.Unmarshal(bytes, &obj); err != nil {
-		log.Fatalf("FAIL UNMARSHALing @ URI: %v\n", uri)
+		errxit("FAIL UNMARSHALing @ URI: " + uri)
 	}
 }
 
@@ -65,7 +64,7 @@ type tgModel struct {
 func (o *tgModel) FillFromURI(uri string) {
 	uriToOBJ(uri, o)
 	if !o.Ok {
-		log.Fatalf("Telegram request error. Maybe BAD token?")
+		errxit(_TgBadToken)
 	}
 }
 
