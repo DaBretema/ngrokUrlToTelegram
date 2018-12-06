@@ -7,8 +7,8 @@ import (
 )
 
 //
-// Helpers
-//
+
+// Net wrappers ===============================================================
 
 func hGet(uri string) *http.Response {
 	response, err := http.Get(uri)
@@ -28,9 +28,9 @@ func uriToOBJ(uri string, obj interface{}) {
 
 //
 
-// Reply of --> "https://api.telegram.org/bot<TOKEN>/getUpdates"
+// Reply of --> "https://api.telegram.org/bot<TOKEN>/getUpdates" ==============
 
-type tgModel struct {
+type uriModelTelegramID struct {
 	Ok     bool `json:"ok"`
 	Result []struct {
 		UpdateID int `json:"update_id"`
@@ -61,18 +61,21 @@ type tgModel struct {
 	} `json:"result"`
 }
 
-func (o *tgModel) FillFromURI(uri string) {
-	uriToOBJ(uri, o)
-	if !o.Ok {
+func tgFromURI(uri string) *uriModelTelegramID {
+	defer recov(_TgConnDown)
+	var tg uriModelTelegramID
+	uriToOBJ(uri, &tg)
+	if !tg.Ok {
 		errxit(_TgBadToken)
 	}
+	return &tg
 }
 
 //
 
-// Reply of --> "http://127.0.0.1:4040/api/tunnels"
+// Reply of --> "http://127.0.0.1:4040/api/tunnels" ===========================
 
-type ngModel struct {
+type uriModelNgrok struct {
 	Tunnels []struct {
 		Name      string `json:"name"`
 		URI       string `json:"uri"`
@@ -109,9 +112,11 @@ type ngModel struct {
 	URI string `json:"uri"`
 }
 
-func (o *ngModel) FillFromURI(uri string) {
+func ngFromURI(uri string) *uriModelNgrok {
 	defer recov(_NgrokDown)
-	uriToOBJ(uri, o)
+	var ng uriModelNgrok
+	uriToOBJ(uri, &ng)
+	return &ng
 }
 
 //
