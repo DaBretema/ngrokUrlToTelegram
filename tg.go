@@ -20,7 +20,9 @@ func newTg(token, msg string) *tgram {
 }
 
 func (tg *tgram) send() {
-	if tg.sendTries >= 5 {
+
+	// Exit after some tries
+	if tg.sendTries >= _Tries {
 		errxit(_TgSleep)
 	}
 	// If fails try again (sometimes bot is sleeped)

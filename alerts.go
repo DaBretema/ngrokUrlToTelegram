@@ -5,7 +5,10 @@ import (
 	"os"
 )
 
+const _Tries = 10
+
 const _NgrokDown = "Ngrok public url not found. Maybe Ngrok is DOWN?"
+const _NgrokBug = "Can't read from Ngrok URI"
 const _TgConnDown = "Fails connecting with Telegram API. Maybe its DOWN?"
 const _TgBadToken = "Telegram request error. Maybe BAD token?"
 const _TgSleep = "Please wakeup the bot before run me :)"
